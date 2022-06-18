@@ -1,3 +1,5 @@
 ## Mini Hangman Game
 
-### To run >>> <sup>python hangman.py</sup>
+## [LIVE DEMO](https://www.online-python.com/rxM0KXFqlk)
+
+### To run locally >>> <sup>python hangman.py</sup>
