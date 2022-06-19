@@ -1,9 +1,12 @@
 # Hangman Game
 
-### to configure the game -> update newGame call at the bottom of the file
+# Random words(nouns) / 10 lives, try your guessing skills!
 
+import re
 import time
-import sys
+import urllib.request
+
+randomWord = urllib.request.urlopen('https://random-word-form.herokuapp.com/random/noun/a').read().decode('utf-8')
 
 def newGame(providedLives, word):
     lives = providedLives
@@ -19,39 +22,14 @@ def newGame(providedLives, word):
         print('Wrong letters: {}'.format(wrongLetters))
         print('Remaining lives: {}'.format(lives))
 
-    def winnerGameReset():
-        global lives
-        global wrongLetters
-        global arrayToFill
-        lives = providedLives
-        wrongLetters = []
-        arrayToFill = ['_,' * len(list(wordStr))]
-        print('\nCongratulations, you won!')
-        time.sleep(1)
-        print('\nStarting a new game...')
-        time.sleep(3)
-        print('\n\n.....................')
-
-
-    def lostGameReset():
-        global lives
-        global wrongLetters
-        global arrayToFill
-        lives = providedLives
-        wrongLetters = []
-        arrayToFill = ['_,' * len(list(wordStr))]
-        print('No more lives left :(')
-        time.sleep(1)
-        print('\nStarting a new game...')
-        time.sleep(3)
-        print('\n\n.....................')
-
 
     while lives > 0:
         userInput = input('\n\nInput a letter:\n').lower()
         if len(userInput) > 1:
             print('Please provide 1 letter only')
-            time.sleep(2)
+            time.sleep(1)
+        if not re.match(r"^[A-Za-z]+$", userInput):
+            print('Alphabetic letters only!')
         else:
             for i in range(len(arrayToFill)):
                 if wordArray[i] == userInput:
@@ -74,10 +52,21 @@ def newGame(providedLives, word):
                 print('Wrong!')
 
             if wordArray == arrayToFill:
-                winnerGameReset()
+                print('\nCongratulations, you won!')
+                time.sleep(3)
+                print('\nStarting a new game...')
+                time.sleep(1)
+                print('\n\n.....................')
+                randomWord = urllib.request.urlopen('https://random-word-form.herokuapp.com/random/noun/a').read().decode('utf-8')
+                newGame(providedLives, randomWord)
 
             if lives == 0:
-                lostGameReset()
+                print('No more lives left :(')
+                time.sleep(3)
+                print('\nStarting a new game...')
+                time.sleep(1)
+                print('\n\n.....................')
+                randomWord = urllib.request.urlopen('https://random-word-form.herokuapp.com/random/noun/a').read().decode('utf-8')
+                newGame(providedLives, randomWord)
 
-### update this
-newGame(5, 'Apple')
+newGame(10, randomWord)
