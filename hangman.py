@@ -1,72 +1,78 @@
-# Hangman Game
-
-# Random words(nouns) / 10 lives, try your guessing skills!
-
 import re
 import time
-import urllib.request
+import requests
+from sys import exit
 
-randomWord = urllib.request.urlopen('https://random-word-form.herokuapp.com/random/noun/a').read().decode('utf-8')
+def fetch_random_word():
+    try:
+       random_word =  requests.get("https://random-word-form.herokuapp.com/random/noun1", timeout=5)
+       random_word.raise_for_status() # throw an error on 4xx/5xx status code
+       return random_word.json().pop().lower()
+    except requests.exceptions.RequestException as error:
+        print("Fetch failed: ", error)
+        print("Aborting...")
+        exit()
 
-def newGame(providedLives, word):
-    lives = providedLives
-    wordStr = word.lower()
-    wordArray = list(wordStr)
-    arrayToFill = ['_'] * len(list(wordStr))
-    wrongLetters = []
-    correct = False
+def validate_input(input):
+    if len(input) > 1:
+        return {"ok": False, "message": "Provide 1 letter only"}
+    if not re.match(r"^[a-z]+$", input):
+        return {"ok": False, "message": "Alphabetic letters only"}
+    else:
+        return {"ok": True}
+
+def newGame():
+    # Init setup
+    random_word = fetch_random_word()
+    attempts = 10
+    # ------
+    word_array = list(random_word)
+    array_to_fill = ['_'] * len(word_array)
+    wrong_letters = []
 
 
     def showInfo():
-        print('Current word: {}'.format(arrayToFill))
-        print('Wrong letters: {}'.format(wrongLetters))
-        print('Remaining lives: {}'.format(lives))
+        print(f"Guessed letters: {array_to_fill}")
+        print(f"Wrong letters: {wrong_letters}")
+        print(f"Attempts left: {attempts}")
 
 
-    while lives > 0:
-        userInput = input('\n\nInput a letter:\n').lower()
-        if len(userInput) > 1:
-            print('Please provide 1 letter only')
-            time.sleep(1)
-        if not re.match(r"^[A-Za-z]+$", userInput):
-            print('Alphabetic letters only!')
+    while attempts > 0:
+        print("\n ---")
+        user_input = input("Input a letter: ")
+        is_valid = validate_input(user_input)
+        if not is_valid["ok"]:
+            # validation issue
+            print(is_valid["message"])
+            continue
+        if user_input not in word_array:
+            # incorrect guess
+            if user_input not in wrong_letters:
+                attempts = attempts - 1
+                wrong_letters.append(user_input)
+            print(f"Oops! Letter '{user_input}' is not in the word!")
+            showInfo()
+            continue
         else:
-            for i in range(len(arrayToFill)):
-                if wordArray[i] == userInput:
-                    arrayToFill[i] = userInput
-                    showInfo()
-                    correct = True
-
-            if correct:
-                print('Correct!')
-                correct = False
+            # correct guess
+            for i in range(len(array_to_fill)):
+                if word_array[i] == user_input:
+                    array_to_fill[i] = user_input
+            if word_array == array_to_fill:
+                print("\nCongratulations, you won!")
+                showInfo()
+                restart()
             else:
-                correct = False
-                if userInput not in wrongLetters:
-                    wrongLetters.append(userInput)
-                    lives = lives - 1
-                    showInfo()
-                else:
-                    showInfo()
+                print("Nice!")
+                showInfo()
+    else:
+        print("No attempts left! Game over.")
+        restart()
 
-                print('Wrong!')
+def restart():
+    time.sleep(2)
+    print("Restarting...")
+    time.sleep(1)
+    newGame()
 
-            if wordArray == arrayToFill:
-                print('\nCongratulations, you won!')
-                time.sleep(3)
-                print('\nStarting a new game...')
-                time.sleep(1)
-                print('\n\n.....................')
-                randomWord = urllib.request.urlopen('https://random-word-form.herokuapp.com/random/noun/a').read().decode('utf-8')
-                newGame(providedLives, randomWord)
-
-            if lives == 0:
-                print('No more lives left :(')
-                time.sleep(3)
-                print('\nStarting a new game...')
-                time.sleep(1)
-                print('\n\n.....................')
-                randomWord = urllib.request.urlopen('https://random-word-form.herokuapp.com/random/noun/a').read().decode('utf-8')
-                newGame(providedLives, randomWord)
-
-newGame(10, randomWord)
+newGame()
