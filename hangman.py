@@ -15,56 +15,78 @@ def fetch_random_word():
         exit()
 
 def validate_input(input):
-    if len(input) > 1:
-        return {"ok": False, "message": "Provide 1 letter only"}
+    if len(input) != 5:
+        return {"ok": False, "message": "5-letter word only"}
     if not re.match(r"^[a-z]+$", input):
         return {"ok": False, "message": "Alphabetic letters only"}
     else:
         return {"ok": True}
+
+def highlight_guessed_input(input, word_array):
+    def mark_green(letter):
+        return f">{letter}<"
+
+    def mark_yellow(letter):
+        return f"*{letter}*"
+    
+    result = [""] * len(word_array)
+    tracking_letters = list(word_array) # duplicate array
+    
+    for i in range(len(word_array)):
+        if input[i] == word_array[i]:
+            result[i] = mark_green(input[i])
+            tracking_letters[i] = None # mark as used
+    for i in range(len(word_array)):
+        if result[i] == "":
+            if input[i] in tracking_letters: # this should now ignore all green marked letters
+                result[i] = mark_yellow(input[i])
+                marked_char_idx = tracking_letters.index(input[i])
+                tracking_letters[marked_char_idx] = None # mark as used
+            else:
+                result[i] = input[i]
+    return result
+
 
 def newGame():
     # Init setup
     attempts = 6
     random_word = fetch_random_word()
     word_array = list(random_word)
-    array_to_fill = ['_'] * len(word_array)
-    wrong_letters = []
+    words_grid = []
 
 
     def showInfo():
-        print(f"Guessed letters: {array_to_fill}")
-        print(f"Wrong letters: {wrong_letters}")
+        print(f"Current words: {words_grid}")
         print(f"Attempts left: {attempts}")
 
 
     while attempts > 0:
         print("\n ---")
-        user_input = input("Input a letter: ")
+        user_input = input("Input a word: ")
         is_valid = validate_input(user_input)
         if not is_valid["ok"]:
             # validation issue
             print(is_valid["message"])
             continue
-        if user_input not in word_array:
+        if user_input != random_word:
             # incorrect guess
-            if user_input not in wrong_letters:
+            if user_input not in words_grid:
                 attempts = attempts - 1
-                wrong_letters.append(user_input)
-            print(f"Oops! Letter '{user_input}' is not in the word!")
-            showInfo()
+                highlight_input = highlight_guessed_input(user_input, word_array)
+                words_grid.append(highlight_input)
+                print(f"Oops! Word '{user_input}' is not the right word!")
+                showInfo()
+            else:
+                print(f"Word '{user_input}' is already in the list")
             continue
         else:
             # correct guess
-            for i in range(len(array_to_fill)):
-                if word_array[i] == user_input:
-                    array_to_fill[i] = user_input
-            if word_array == array_to_fill:
-                print("\nCongratulations, you won!")
-                showInfo()
-                restart()
-            else:
-                print("Nice!")
-                showInfo()
+            attempts = attempts - 1
+            highlight_input = highlight_guessed_input(user_input, word_array)
+            words_grid.append(highlight_input)
+            print("\nCongratulations, you won!")
+            showInfo()
+            restart()
     else:
         print("No attempts left! Game over.")
         restart()
