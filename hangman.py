@@ -4,8 +4,9 @@ import requests
 from sys import exit
 
 def fetch_random_word():
+    word_length = 5
     try:
-       random_word =  requests.get("https://random-word-form.herokuapp.com/random/noun1", timeout=5)
+       random_word =  requests.get(f"https://random-word-api.herokuapp.com/word?length={word_length}", timeout=5)
        random_word.raise_for_status() # throw an error on 4xx/5xx status code
        return random_word.json().pop().lower()
     except requests.exceptions.RequestException as error:
@@ -23,9 +24,8 @@ def validate_input(input):
 
 def newGame():
     # Init setup
+    attempts = 6
     random_word = fetch_random_word()
-    attempts = 10
-    # ------
     word_array = list(random_word)
     array_to_fill = ['_'] * len(word_array)
     wrong_letters = []
