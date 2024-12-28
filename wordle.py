@@ -30,18 +30,18 @@ def highlight_guessed_input(input, word_array):
         return f"*{letter}*"
     
     result = [""] * len(word_array)
-    tracking_letters = list(word_array) # duplicate array
+    tracking_letters = list(word_array) # copy array
     
     for i in range(len(word_array)):
         if input[i] == word_array[i]:
             result[i] = mark_green(input[i])
-            tracking_letters[i] = None # mark as used
+            tracking_letters[i] = None # remove from tracking
     for i in range(len(word_array)):
         if result[i] == "":
             if input[i] in tracking_letters: # this should now ignore all green marked letters
                 result[i] = mark_yellow(input[i])
                 marked_char_idx = tracking_letters.index(input[i])
-                tracking_letters[marked_char_idx] = None # mark as used
+                tracking_letters[marked_char_idx] = None # remove from tracking
             else:
                 result[i] = input[i]
     return result
@@ -88,7 +88,7 @@ def newGame():
             showInfo()
             restart()
     else:
-        print("No attempts left! Game over.")
+        print(f"No attempts left! Game over. The word was: {random_word}")
         restart()
 
 def restart():
