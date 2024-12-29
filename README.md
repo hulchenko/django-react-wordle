@@ -4,5 +4,5 @@
 
 ### To run locally:
 
-- pip install -r requirements.txt
-- python hangman.py
+- pipenv install
+- python wordle.py
