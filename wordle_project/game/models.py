@@ -10,7 +10,7 @@ class User(models.Model):
 # Test users: <QuerySet [<User: Test, test@example.com>, <User: Test1, test1@example.com>]>
 
 class Leaderboard(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) # remove user if the record is removed from the leaderboard
     score = models.IntegerField(default=0)
     score_date = models.DateTimeField('date scored')
     games_played = models.IntegerField(default=0)
