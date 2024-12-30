@@ -1,8 +1,10 @@
-## Mini Hangman Game
+## Wordle Game
 
 [LIVE DEMO](https://edube.org/sandbox/d14b55b6-ef99-11ec-ac00-0242157e55ca)
 
-### To run locally:
+### To run terminal version locally:
 
-- pipenv install
-- python wordle.py
+```
+pip install requests
+python wordle.py
+```
