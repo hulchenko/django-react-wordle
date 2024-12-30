@@ -3,16 +3,21 @@ import time
 import requests
 from sys import exit
 
+
 def fetch_random_word():
     word_length = 5
     try:
-       random_word =  requests.get(f"https://random-word-api.herokuapp.com/word?length={word_length}", timeout=5)
-       random_word.raise_for_status() # throw an error on 4xx/5xx status code
-       return random_word.json().pop().lower()
+        random_word = requests.get(
+            f"https://random-word-api.herokuapp.com/word?length={word_length}",
+            timeout=5,
+        )
+        random_word.raise_for_status()  # throw an error on 4xx/5xx status code
+        return random_word.json().pop().lower()
     except requests.exceptions.RequestException as error:
         print("Fetch failed: ", error)
         print("Aborting...")
         exit()
+
 
 def validate_input(input):
     if len(input) != 5:
@@ -22,43 +27,44 @@ def validate_input(input):
     else:
         return {"ok": True}
 
+
 def highlight_guessed_input(input, word_array):
     def mark_green(letter):
         return f">{letter}<"
 
     def mark_yellow(letter):
         return f"*{letter}*"
-    
+
     result = [""] * len(word_array)
-    tracking_letters = list(word_array) # copy array
-    
+    tracking_letters = list(word_array)  # copy array
+
     for i in range(len(word_array)):
         if input[i] == word_array[i]:
             result[i] = mark_green(input[i])
-            tracking_letters[i] = None # remove from tracking
+            tracking_letters[i] = None  # remove from tracking
     for i in range(len(word_array)):
         if result[i] == "":
-            if input[i] in tracking_letters: # this should now ignore all green marked letters
+            if (
+                input[i] in tracking_letters
+            ):  # this should now ignore all green marked letters
                 result[i] = mark_yellow(input[i])
                 marked_char_idx = tracking_letters.index(input[i])
-                tracking_letters[marked_char_idx] = None # remove from tracking
+                tracking_letters[marked_char_idx] = None  # remove from tracking
             else:
                 result[i] = input[i]
     return result
 
 
-def newGame():
+def new_game():
     # Init setup
     attempts = 6
     random_word = fetch_random_word()
     word_array = list(random_word)
     words_grid = []
 
-
     def showInfo():
         print(f"Current words: {words_grid}")
         print(f"Attempts left: {attempts}")
-
 
     while attempts > 0:
         print("\n ---")
@@ -91,10 +97,12 @@ def newGame():
         print(f"No attempts left! Game over. The word was: {random_word}")
         restart()
 
+
 def restart():
     time.sleep(2)
     print("Restarting...")
     time.sleep(1)
-    newGame()
+    new_game()
 
-newGame()
+
+new_game()
