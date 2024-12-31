@@ -150,8 +150,8 @@ def new_game(request):
     # store session variables
     request.session["word"] = random_word
     request.session["attempts"] = 6
-    request.session["words_grid"] = []
-    return Response({"message": "Game started", "attempts": 6})
+    request.session["words_list"] = []
+    return Response({"message": "Game started", "attempts": 6, "result": None})
 
 
 @api_view(["POST"])
@@ -160,28 +160,36 @@ def guess_word(request):
     word = request.session.get("word")
     print("WORD:", word)  # TODO remove
     attempts = request.session.get("attempts", 0)
-    words_grid = request.session.get("words_grid")
+    words_list = request.session.get("words_list")
     if attempts <= 0:
-        return Response({"message": "Game over!"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "Game over!", "attempts": 0, "result": None},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     user_input = request.data.get("guess")
     is_input_valid = validate_input(user_input)
     if not is_input_valid["ok"]:
         return Response(
-            {"message": is_input_valid["message"]}, status=status.HTTP_400_BAD_REQUEST
+            {
+                "message": is_input_valid["message"],
+                "result": None,
+                "attempts": attempts,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     if user_input != word:
         # incorrect guess
-        if user_input not in words_grid:
+        if user_input not in words_list:
             # new word guess
             attempts = attempts - 1
-            words_grid.append(user_input)
+            words_list.append(user_input)
             highlighted_input = highlight_user_input(user_input, word)
 
             # update session variables
             request.session["attempts"] = attempts
-            request.session["words_grid"] = words_grid
+            request.session["words_list"] = words_list
             return Response(
                 {"message": None, "result": highlighted_input, "attempts": attempts}
             )
@@ -196,12 +204,12 @@ def guess_word(request):
     else:
         # correct guess
         attempts = attempts - 1
-        words_grid.append(user_input)
+        words_list.append(user_input)
         highlighted_input = highlight_user_input(user_input, word)
 
         # update session variables
         request.session["attempts"] = attempts
-        request.session["words_grid"] = words_grid
+        request.session["words_list"] = words_list
         return Response(
             {
                 "message": "Congratulations, you won!",
