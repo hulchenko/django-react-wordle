@@ -146,6 +146,36 @@ def highlight_user_input(input, word):
     return result
 
 
+def calculate_score(request):
+    # time
+    # attempts left
+
+    # defaults
+    MAX_SCORE = 999
+    PENALTY_PER_ATTEMPT = 100
+
+    # session data
+    game_start_time = request.session.get("time", 0)
+    attempts_left = request.session.get("attempts", 0)
+
+    # validate session (values don't exist)
+    if game_start_time is None or attempts_left is None:
+        return 0
+
+    # calculation
+    curr_time = time.time()
+    game_total_time = curr_time - game_start_time  # sec
+
+    if game_total_time >= MAX_SCORE:
+        return 0
+
+    attempts_used = 6 - attempts_left
+
+    final_score = MAX_SCORE - game_total_time - (attempts_used * PENALTY_PER_ATTEMPT)
+
+    return max(final_score, 0)  # return 0, if final_score is negative
+
+
 @api_view(["GET"])
 def new_game(request):
     random_word = fetch_random_word()
@@ -153,6 +183,7 @@ def new_game(request):
     request.session["word"] = random_word
     request.session["attempts"] = 6
     request.session["words_list"] = []
+    request.session["time"] = time.time()
     return Response({"message": "Game started.", "attempts": 6})
 
 
@@ -180,6 +211,7 @@ def guess_word(request):
             highlighted_input = highlight_user_input(user_input, word)
 
             if attempts <= 0:
+                # game over: defeat
                 return Response(
                     {
                         "victory": False,
@@ -198,7 +230,7 @@ def guess_word(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
     else:
-        # correct guess
+        # game over: victory
         attempts = attempts - 1
         words_list.append(user_input)
         highlighted_input = highlight_user_input(user_input, word)
@@ -206,11 +238,13 @@ def guess_word(request):
         # update session variables
         request.session["attempts"] = attempts
         request.session["words_list"] = words_list
+        score = calculate_score(request)
         return Response(
             {
                 "victory": True,
                 "result": highlighted_input,
                 "attempts": attempts,
+                "score": score,
             }
         )
 

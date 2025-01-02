@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
 
-export const ScoreModal = ({ victory, restart }: { victory: boolean; restart: () => void }) => {
+export const ScoreModal = ({ victory, restart, score }: { victory: boolean; restart: () => void; score: number }) => {
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
@@ -18,7 +18,7 @@ export const ScoreModal = ({ victory, restart }: { victory: boolean; restart: ()
         const userObj = {
           user_name: nickname,
           user_email: email,
-          score: "1", // TODO
+          score: Math.ceil(score || 0),
         };
         const response = await fetch("api/leaderboard/submit-score", {
           method: "POST",
@@ -59,9 +59,12 @@ export const ScoreModal = ({ victory, restart }: { victory: boolean; restart: ()
       <div className="w-full h-full fixed bg-slate-200 font-thin">
         <div className="border border-slate-300 bg-slate-100 rounded mt-40 w-[600px] m-auto p-4">
           {victory ? (
-            <div className="text-emerald-600">
-              <h1 className="text-2xl">Congratulations!</h1>
-              <p className="text-lg">You won!🏆</p>
+            <div className="">
+              <h1 className="text-2xl text-emerald-600">Congratulations!</h1>
+              <p className="mt-4 text-lg">You won!🏆</p>
+              <p className="mt-2">
+                Final score: <span className="font-bold">{Math.ceil(score || 0)}</span>
+              </p>
             </div>
           ) : (
             <div className="text-pink-600">
@@ -69,7 +72,7 @@ export const ScoreModal = ({ victory, restart }: { victory: boolean; restart: ()
               <p className="text-lg">Better luck next time!🕹️</p>
             </div>
           )}
-          <div className="flex flex-col gap-4 w-full justify-center items-center mt-10">
+          <div className="flex flex-col gap-4 w-full justify-center items-center mt-8">
             <p>Play again?</p>
             <div className="flex gap-4">
               <button className="border p-2 bg-slate-600 text-white rounded" onClick={() => navigate("/")}>
