@@ -1,9 +1,9 @@
 import { PropagateLoader } from "react-spinners";
 
-export const Loader = () => {
+export const Loader = ({ marginTop, size }: { marginTop: number; size: number }) => {
   return (
-    <div className="w-full mt-96">
-      <PropagateLoader color="#777" size={30} />
+    <div className={`w-full mt-${marginTop}`}>
+      <PropagateLoader color="#777" size={size} />
     </div>
   );
 };
