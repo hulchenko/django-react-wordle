@@ -49,7 +49,7 @@ export const Game = () => {
 
   useEffect(() => {
     const alphabetical = /^[A-Z]$/;
-    let guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "" })); // .fill() didn't work, as it points to the same object in memory
+    let guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "", local: true })); // .fill() didn't work, as it points to the same object in memory
 
     const guessHandler = (e) => {
       const key = e.key.toUpperCase();
@@ -92,7 +92,7 @@ export const Game = () => {
 
           // reset values
           userGuess.current = "";
-          guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "" }));
+          guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "", local: true }));
         } else {
           toast.error("5-letter word only!");
         }
@@ -149,7 +149,7 @@ export const Game = () => {
       toast.error(error);
 
       // TODO add global function to reset current grid (use in useState gameData too)
-      const guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "" }));
+      const guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "", local: true }));
       setGrid((prevGrid) => {
         const newGrid = [...prevGrid];
         newGrid[6 - attempts] = guessArr; // update current array sequence
@@ -160,7 +160,6 @@ export const Game = () => {
   });
 
   const restart = () => {
-    console.log(`restart clicked!`);
     setGrid(Array(6).fill(Array(5).fill("")));
     setGameInfo({ over: false, victory: false, message: "", score: 0 });
     setGameKey(Date.now()); // refetch
@@ -172,22 +171,25 @@ export const Game = () => {
   return (
     <>
       {gameInfo.over && <ScoreModal victory={gameInfo.victory} restart={restart} score={gameInfo.score} />}
-      <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-slate-300 p-2 rounded bg-slate-100">
-        {grid.map((row, i) => (
-          <div key={i} className="flex grow gap-1">
-            {row.map((cell: { letter: string; color: string }, j: number) => (
-              <div
-                key={j}
-                className={`w-full flex justify-center items-center text-2xl uppercase font-bold text-white min-h-[40px] rounded ${
-                  customColors[cell.color] || "bg-slate-300"
-                }`}
-              >
-                {cell.letter || null}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+      {!gameInfo.over && (
+        <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-slate-300 p-2 rounded bg-slate-100 animate-fade-in">
+          {grid.map((row, i) => (
+            <div key={i} className="flex grow gap-1">
+              {row.map((cell: { letter: string; color: string }, j: number) => (
+                <div
+                  key={j}
+                  className={`w-full flex justify-center items-center text-2xl uppercase font-bold text-white min-h-[40px] rounded 
+                  ${cell.letter && "animate-boop"}
+                  ${cell && !cell.local && "animate-flip"}
+                  ${customColors[cell.color] || "bg-slate-300"}`}
+                >
+                  {cell.letter || null}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };
