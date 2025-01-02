@@ -25,5 +25,5 @@ class LeaderboardSerializer(serializers.ModelSerializer):
             "user_name",
             "score",
             "score_date",
-            "games_played",
+            "wins",
         ]

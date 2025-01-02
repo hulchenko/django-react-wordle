@@ -73,14 +73,14 @@ def create_leaderboard_record(request):
     leaderboard_record, is_new_record = Leaderboard.objects.get_or_create(user=user)
     leaderboard_record.score = request.data.get("score", 0)
     if is_new_record:
-        leaderboard_record.games_played = 1
+        leaderboard_record.wins = 1
     else:
-        leaderboard_record.games_played = (
-            F("games_played") + 1
+        leaderboard_record.wins = (
+            F("wins") + 1
         )  # F is a built-in function for manipulating the existing DB data
     leaderboard_record.save()  # store in DB
 
-    # Refresh from DB to get updated games_played count
+    # Refresh from DB to get updated wins count
     leaderboard_record.refresh_from_db()
 
     serializer = LeaderboardSerializer(instance=leaderboard_record)

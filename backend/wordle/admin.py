@@ -4,7 +4,7 @@ from .models import User, Leaderboard
 
 
 class LeaderboardAdmin(admin.ModelAdmin):
-    list_display = ("user", "score", "score_date", "games_played")
+    list_display = ("user", "score", "score_date", "wins")
 
 
 admin.site.register(User)
