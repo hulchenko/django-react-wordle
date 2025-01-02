@@ -103,14 +103,16 @@ def fetch_random_word():
         return random_word.json().pop().lower()
     except requests.exceptions.RequestException as error:
         print("Fetch failed: ", error)
-        return Response({"message": "Error getting word"})
+        return Response(
+            {"error": "Error getting word"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 def validate_input(input):
     if len(input) != 5:
-        return {"ok": False, "message": "5-letter word only"}
+        return {"ok": False, "error": "5-letter word only"}
     if not re.match(r"^[a-z]+$", input):
-        return {"ok": False, "message": "Alphabetic letters only"}
+        return {"ok": False, "error": "Alphabetic letters only"}
     else:
         return {"ok": True}
 
@@ -151,7 +153,7 @@ def new_game(request):
     request.session["word"] = random_word
     request.session["attempts"] = 6
     request.session["words_list"] = []
-    return Response({"message": "Game started", "attempts": 6, "result": None})
+    return Response({"message": "Game started.", "attempts": 6})
 
 
 @api_view(["POST"])
@@ -161,21 +163,11 @@ def guess_word(request):
     print("WORD:", word)  # TODO remove
     attempts = request.session.get("attempts", 0)
     words_list = request.session.get("words_list")
-    if attempts <= 0:
-        return Response(
-            {"message": "Game over!", "attempts": 0, "result": None},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
     user_input = request.data.get("guess")
     is_input_valid = validate_input(user_input)
     if not is_input_valid["ok"]:
         return Response(
-            {
-                "message": is_input_valid["message"],
-                "result": None,
-                "attempts": attempts,
-            },
+            {"error": is_input_valid["error"]},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -187,19 +179,24 @@ def guess_word(request):
             words_list.append(user_input)
             highlighted_input = highlight_user_input(user_input, word)
 
+            if attempts <= 0:
+                return Response(
+                    {
+                        "message": "Game over. Better luck next time!",
+                        "victory": False,
+                        "result": highlighted_input,  # add result for the final render in the UI
+                        "attempts": 0,
+                    }
+                )
+
             # update session variables
             request.session["attempts"] = attempts
             request.session["words_list"] = words_list
-            return Response(
-                {"message": None, "result": highlighted_input, "attempts": attempts}
-            )
+            return Response({"result": highlighted_input, "attempts": attempts})
         else:
             return Response(
-                {
-                    "message": "The word is already in the list!",
-                    "result": None,
-                    "attempts": attempts,
-                }
+                {"error": "The word is already in the list!"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
     else:
         # correct guess
@@ -213,6 +210,7 @@ def guess_word(request):
         return Response(
             {
                 "message": "Congratulations, you won!",
+                "victory": True,
                 "result": highlighted_input,
                 "attempts": attempts,
             }
