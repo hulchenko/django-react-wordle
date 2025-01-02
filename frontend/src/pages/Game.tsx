@@ -1,5 +1,7 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { Error } from "../components/Error";
 
 const COLORS = {
   gray: "bg-gray-600",
@@ -10,32 +12,31 @@ const COLORS = {
 
 export const Game = () => {
   const [grid, setGrid] = useState(Array(6).fill(Array(5).fill("")));
-  const [message, setMessage] = useState("");
-  const [attempts, setAttempts] = useState(0);
-  const [result, setResult] = useState("");
-
   const attemptsRef = useRef(0);
   const userGuess = useRef("");
 
-  const { error, data: gameData } = useQuery({
+  const {
+    error,
+    isLoading,
+    data: gameData,
+  } = useQuery({
     queryKey: ["newGame"],
     queryFn: () => fetch("api/new-game/").then((res) => res.json()),
   });
 
   useEffect(() => {
-    attemptsRef.current = attempts;
-  }, [attempts]);
-
-  useEffect(() => {
     if (gameData) {
-      console.log(`gameData: `, gameData);
-      // initialize game data
-      const { message, attempts, result } = gameData;
-      setMessage(message);
-      setAttempts(attempts);
-      setResult(result);
+      // initialize game data from query call
+      console.log(gameData);
+      const { message, attempts } = gameData;
+      toast(message);
+      // setAttempts(attempts);
+      attemptsRef.current = attempts;
     }
-  }, [gameData]);
+    if (error) {
+      toast.error("Error connecting to the game server.");
+    }
+  }, [gameData, error]);
 
   useEffect(() => {
     const alphabetical = /^[A-Z]$/;
@@ -59,7 +60,6 @@ export const Game = () => {
 
       if (alphabetical.test(key) && attemptsRef.current > 0) {
         const emptySlot = guessArr.findIndex((slot) => slot.letter === ""); // fill out the first empty string
-        console.log(`EMPTY SLOT: `, emptySlot);
         if (emptySlot !== -1) {
           guessArr[emptySlot].letter = key;
           guessArr[emptySlot].color = "input";
@@ -84,8 +84,9 @@ export const Game = () => {
           // reset values
           userGuess.current = "";
           guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "" }));
+        } else {
+          toast.error("5-letter word only!");
         }
-        setMessage("5-letter word only!"); // TODO add more of these in the UI; replace backend with errors instead
       }
     };
 
@@ -107,30 +108,39 @@ export const Game = () => {
         const data = await response.json();
         if (!response.ok) {
           // intercept + throw error for onError() method, otherwise it ends up in onSuccess()
-          throw data.message;
+          throw data.error;
         }
-        console.log(data);
         return data;
       } catch (error) {
         throw error;
       }
     },
     onSuccess: (data) => {
+      console.log(`ON SUCCESS: `, data);
+      const prevAttempts = attemptsRef.current;
+      const { error, message, attempts, result } = data;
+      if (error) {
+        // intercept for onError()
+        throw error;
+      }
+      if (message) {
+        toast(message);
+      }
       setGrid((prevGrid) => {
-        setAttempts(data.attempts);
-        setMessage(data.message);
         const newGrid = [...prevGrid];
-        newGrid[6 - attempts] = data.result.map((data) => data); // update current array sequence
+        newGrid[6 - prevAttempts] = result.map((letter: string) => letter); // update current array sequence
         return newGrid;
       });
+      attemptsRef.current = attempts;
     },
-    onError: (error) => {
+    onError: (error: string) => {
       console.error("Error submitting guess: ", error);
-      setMessage(error);
+      toast.error(error);
     },
   });
 
-  if (error) return "Error starting the game. Please try again.";
+  if (isLoading) return "Loading...";
+  if (error) return <Error />;
 
   return (
     <>
@@ -150,17 +160,7 @@ export const Game = () => {
           </div>
         ))}
       </div>
-      {/* <input
-        type="text"
-        maxLength={5}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            submitGuess(e.target.value);
-          }
-        }}
-      /> */}
-      <p>MESSAGE: {message}</p>
-      <p>ATTEMPTS: {attempts}</p>
+      <p>ATTEMPTS: {attemptsRef.current}</p>
     </>
   );
 };
