@@ -3,17 +3,24 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Error } from "../components/Error";
 import { Loader } from "../components/Loader";
+import { ScoreModal } from "../components/ScoreModal";
 
-const COLORS = {
-  gray: "bg-gray-600",
+const customColors = {
+  gray: "bg-slate-600",
   yellow: "bg-yellow-500",
   green: "bg-green-600",
-  input: "bg-gray-400",
+  input: "bg-slate-400",
 };
 
+const startGame = () => fetch("api/new-game/").then((res) => res.json());
+
 export const Game = () => {
+  const [gameKey, setGameKey] = useState(Date.now()); // required for new game
   const [grid, setGrid] = useState(Array(6).fill(Array(5).fill("")));
-  const attemptsRef = useRef(0);
+  const [gameInfo, setGameInfo] = useState({ over: false, victory: false, message: "" });
+  const [attempts, setAttempts] = useState(0);
+  const [disabledInput, setDisabledInput] = useState(false);
+
   const userGuess = useRef("");
 
   const {
@@ -21,8 +28,8 @@ export const Game = () => {
     isLoading,
     data: gameData,
   } = useQuery({
-    queryKey: ["newGame"],
-    queryFn: () => fetch("api/new-game/").then((res) => res.json()),
+    queryKey: ["newGame", gameKey],
+    queryFn: startGame,
   });
 
   useEffect(() => {
@@ -31,7 +38,9 @@ export const Game = () => {
       console.log(gameData);
       const { message, attempts } = gameData;
       toast(message);
-      attemptsRef.current = attempts;
+      setAttempts(attempts);
+      setGameInfo({ over: false, victory: false, message: "" });
+      setGrid(Array(6).fill(Array(5).fill("")));
     }
     if (error) {
       toast.error("Error connecting to the game server.");
@@ -48,7 +57,7 @@ export const Game = () => {
       const updateGrid = () => {
         setGrid((prevGrid) => {
           const newGrid = [...prevGrid];
-          newGrid[6 - attemptsRef.current] = guessArr; // update current array sequence
+          newGrid[6 - attempts] = guessArr; // update current array sequence
           return newGrid;
         });
         const guessStr = guessArr
@@ -58,15 +67,14 @@ export const Game = () => {
         userGuess.current = guessStr;
       };
 
-      if (alphabetical.test(key) && attemptsRef.current > 0) {
+      if (alphabetical.test(key) && !disabledInput) {
         const emptySlot = guessArr.findIndex((slot) => slot.letter === ""); // fill out the first empty string
         if (emptySlot !== -1) {
           guessArr[emptySlot].letter = key;
           guessArr[emptySlot].color = "input";
           updateGrid();
         }
-      }
-      if (key === "BACKSPACE") {
+      } else if (key === "BACKSPACE") {
         for (let i = guessArr.length - 1; i >= 0; i--) {
           if (guessArr[i].letter !== "") {
             // clear out the last filled string
@@ -76,9 +84,10 @@ export const Game = () => {
             break;
           }
         }
-      }
-      if (key === "ENTER") {
+      } else if (key === "ENTER") {
+        if (gameInfo.over) return;
         if (userGuess.current.length === 5) {
+          setDisabledInput(true);
           submitGuess.mutate(userGuess.current);
 
           // reset values
@@ -90,12 +99,14 @@ export const Game = () => {
       }
     };
 
-    document.addEventListener("keyup", guessHandler);
+    if (!gameInfo.over || attempts > 0) {
+      document.addEventListener("keyup", guessHandler);
+    }
 
     return () => {
       document.removeEventListener("keyup", guessHandler);
     };
-  }, []);
+  }, [attempts, disabledInput]);
 
   const submitGuess = useMutation({
     mutationFn: async (guess: string) => {
@@ -117,47 +128,66 @@ export const Game = () => {
     },
     onSuccess: (data) => {
       console.log(`ON SUCCESS: `, data);
-      const prevAttempts = attemptsRef.current;
-      const { error, message, attempts, result } = data;
+      const { error, attempts: newAttempts, result, victory } = data;
       if (error) {
         // intercept for onError()
         throw error;
       }
-      if (message) {
-        toast(message);
+      if ("victory" in data) {
+        setGameInfo((prevInfo) => ({ ...prevInfo, over: true, victory }));
       }
       setGrid((prevGrid) => {
         const newGrid = [...prevGrid];
-        newGrid[6 - prevAttempts] = result.map((letter: string) => letter); // update current array sequence
+        newGrid[6 - attempts] = result.map((letter: string) => letter); // update current array sequence
         return newGrid;
       });
-      attemptsRef.current = attempts;
+      setAttempts(newAttempts);
+      setDisabledInput(false);
     },
     onError: (error: string) => {
       console.error("Error submitting guess: ", error);
       toast.error(error);
+
+      // TODO add global function to reset current grid (use in useState gameData too)
+      const guessArr = Array.from({ length: 5 }, () => ({ letter: "", color: "" }));
+      setGrid((prevGrid) => {
+        const newGrid = [...prevGrid];
+        newGrid[6 - attempts] = guessArr; // update current array sequence
+        return newGrid;
+      });
+      setDisabledInput(false);
     },
   });
 
-  if (isLoading) return <Loader />;
+  const restart = () => {
+    console.log(`restart clicked!`);
+    setGrid(Array(6).fill(Array(5).fill("")));
+    setGameInfo({ over: false, victory: false, message: "" });
+    setGameKey(Date.now()); // refetch
+  };
+
+  if (isLoading) return <Loader marginTop={96} size={30} />;
   if (error) return <Error />;
 
   return (
-    <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-gray-300 p-2 rounded">
-      {grid.map((row, i) => (
-        <div key={i} className="flex grow gap-1">
-          {row.map((cell, j) => (
-            <div
-              key={j}
-              className={`w-full flex justify-center items-center text-2xl uppercase font-bold text-white min-h-[40px] rounded ${
-                COLORS[cell.color] || "bg-gray-300"
-              }`}
-            >
-              {cell.letter || null}
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
+    <>
+      {gameInfo.over && <ScoreModal victory={gameInfo.victory} restart={restart} />}
+      <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-slate-300 p-2 rounded bg-slate-100">
+        {grid.map((row, i) => (
+          <div key={i} className="flex grow gap-1">
+            {row.map((cell: { letter: string; color: string }, j: number) => (
+              <div
+                key={j}
+                className={`w-full flex justify-center items-center text-2xl uppercase font-bold text-white min-h-[40px] rounded ${
+                  customColors[cell.color] || "bg-slate-300"
+                }`}
+              >
+                {cell.letter || null}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
