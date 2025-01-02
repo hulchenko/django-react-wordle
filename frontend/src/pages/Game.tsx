@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Error } from "../components/Error";
+import { Loader } from "../components/Loader";
 
 const COLORS = {
   gray: "bg-gray-600",
@@ -30,7 +31,6 @@ export const Game = () => {
       console.log(gameData);
       const { message, attempts } = gameData;
       toast(message);
-      // setAttempts(attempts);
       attemptsRef.current = attempts;
     }
     if (error) {
@@ -139,28 +139,25 @@ export const Game = () => {
     },
   });
 
-  if (isLoading) return "Loading...";
+  if (isLoading) return <Loader />;
   if (error) return <Error />;
 
   return (
-    <>
-      <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1">
-        {grid.map((row, i) => (
-          <div key={i} className="flex grow gap-1">
-            {row.map((cell, j) => (
-              <div
-                key={j}
-                className={`w-full flex justify-center items-center text-2xl uppercase font-bold text-white min-h-[40px] rounded ${
-                  COLORS[cell.color] || "bg-gray-300"
-                }`}
-              >
-                {cell.letter || null}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-      <p>ATTEMPTS: {attemptsRef.current}</p>
-    </>
+    <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-gray-300 p-2 rounded">
+      {grid.map((row, i) => (
+        <div key={i} className="flex grow gap-1">
+          {row.map((cell, j) => (
+            <div
+              key={j}
+              className={`w-full flex justify-center items-center text-2xl uppercase font-bold text-white min-h-[40px] rounded ${
+                COLORS[cell.color] || "bg-gray-300"
+              }`}
+            >
+              {cell.letter || null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 };
