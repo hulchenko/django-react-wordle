@@ -182,7 +182,6 @@ def guess_word(request):
             if attempts <= 0:
                 return Response(
                     {
-                        "message": "Game over. Better luck next time!",
                         "victory": False,
                         "result": highlighted_input,  # add result for the final render in the UI
                         "attempts": 0,
@@ -209,7 +208,6 @@ def guess_word(request):
         request.session["words_list"] = words_list
         return Response(
             {
-                "message": "Congratulations, you won!",
                 "victory": True,
                 "result": highlighted_input,
                 "attempts": attempts,
