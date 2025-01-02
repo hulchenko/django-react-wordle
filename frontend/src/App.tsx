@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <main className="w-full min-h-screen text-center bg-slate-200 select-none">
+    <main className="w-full min-h-screen text-center bg-slate-200 text-slate-700 select-none font-mono">
       <Toaster position="top-center" />
       <Header />
       <Outlet />

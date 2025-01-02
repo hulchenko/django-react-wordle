@@ -4,8 +4,8 @@ import { FAQIcon, LeaderboardIcon } from "./Icons";
 export const Header = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full flex justify-between px-40 p-2 border border-b-slate-300 bg-slate-100">
-      <h1 className=" cursor-pointer text-2xl" onClick={() => navigate("/")}>
+    <div className="w-full flex justify-between px-96 p-2 border border-b-slate-300 bg-slate-100">
+      <h1 className=" cursor-pointer text-2xl font-bold" onClick={() => navigate("/")}>
         Wordle
       </h1>
       <div className="flex gap-4">
