@@ -3,8 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
+import { useLocalUser } from "../hooks/LocalUser";
 
-export const ScoreModal = ({ victory, restart, score }: { victory: boolean; restart: () => void; score: number }) => {
+export const ScoreModal = ({ victory, restart, score, target }: { victory: boolean; restart: () => void; score: number; target: string }) => {
+  const [localUser, setLocalUser] = useLocalUser();
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
@@ -16,8 +18,8 @@ export const ScoreModal = ({ victory, restart, score }: { victory: boolean; rest
     mutationFn: async () => {
       try {
         const userObj = {
-          user_name: nickname,
-          user_email: email,
+          user_name: nickname || localUser.nickname,
+          user_email: email || localUser.email,
           score: Math.ceil(score || 0),
         };
         const response = await fetch("api/leaderboard/submit-score", {
@@ -29,6 +31,10 @@ export const ScoreModal = ({ victory, restart, score }: { victory: boolean; rest
         if (!response.ok) {
           throw "Failed to submit the score.";
         }
+        setLocalUser({
+          nickname: userObj.user_name,
+          email: userObj.user_email,
+        });
       } catch (error) {
         toast.error(error as string);
         throw error;
@@ -59,7 +65,7 @@ export const ScoreModal = ({ victory, restart, score }: { victory: boolean; rest
       <div className="w-full h-full fixed bg-slate-200 font-thin animate-fade-in">
         <div className="border border-slate-300 bg-slate-100 rounded mt-40 w-[600px] m-auto p-4">
           {victory ? (
-            <div className="">
+            <div>
               <h1 className="text-2xl text-emerald-600">Congratulations!</h1>
               <p className="mt-4 text-lg">You won!🏆</p>
               <p className="mt-2">
@@ -67,9 +73,12 @@ export const ScoreModal = ({ victory, restart, score }: { victory: boolean; rest
               </p>
             </div>
           ) : (
-            <div className="text-pink-600">
-              <h1 className="text-2xl">Game over.</h1>
+            <div>
+              <h1 className="text-2xl text-pink-600">Game over.</h1>
               <p className="text-lg">Better luck next time!🕹️</p>
+              <p className="mt-2">
+                Hidden word: <span className="font-bold uppercase">{target}</span>
+              </p>
             </div>
           )}
           <div className="flex flex-col gap-4 w-full justify-center items-center mt-8">
@@ -102,8 +111,22 @@ export const ScoreModal = ({ victory, restart, score }: { victory: boolean; rest
                 {!submitScore.isPending && scoreSubmitted && <h5>Shared! ✅</h5>}
                 {!submitScore.isPending && !scoreSubmitted && (
                   <form onSubmit={leaderBoardSubmit} className="flex gap-4 w-full justify-center">
-                    <input type="name" required placeholder="Your nickname" className="p-2 rounded" onChange={(e) => setNickname(e.target.value)} />
-                    <input type="email" required placeholder="Your email" className="p-2 rounded" onChange={(e) => setEmail(e.target.value)} />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Your nickname"
+                      className="p-2 rounded"
+                      defaultValue={localUser.nickname}
+                      onChange={(e) => setNickname(e.target.value)}
+                    />
+                    <input
+                      type="email"
+                      required
+                      placeholder="Your email"
+                      className="p-2 rounded"
+                      defaultValue={localUser.email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                     <button className="border p-2 border-slate-600 text-slate-600 rounded hover:bg-slate-600 hover:text-white">Submit</button>
                   </form>
                 )}
