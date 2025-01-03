@@ -14,7 +14,7 @@
 
 .animate-fade-in {
   /* game over -> modal pop-up */
-  animation: fade-in 1s;
+  animation: fade-in 0.5s ease-in-out;
 }
 
 @keyframes boop {

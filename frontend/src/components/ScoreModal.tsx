@@ -76,7 +76,7 @@ export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps)
           ) : (
             <div>
               <h1 className="text-2xl text-pink-600">Game over.</h1>
-              <p className="text-lg">Better luck next time!🕹️</p>
+              <p className="mt-4 text-lg">Better luck next time!🕹️</p>
               <p className="mt-2">
                 Hidden word: <span className="font-bold uppercase">{target}</span>
               </p>
