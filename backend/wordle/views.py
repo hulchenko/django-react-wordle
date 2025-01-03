@@ -152,7 +152,7 @@ def calculate_score(request):
 
     # defaults
     MAX_SCORE = 999
-    PENALTY_PER_ATTEMPT = 100
+    PENALTY_PER_ATTEMPT = 50
 
     # session data
     game_start_time = request.session.get("time", 0)
@@ -184,7 +184,7 @@ def new_game(request):
     request.session["attempts"] = 6
     request.session["words_list"] = []
     request.session["time"] = time.time()
-    return Response({"message": "Game started.", "attempts": 6})
+    return Response({"message": "Game started", "attempts": 6})
 
 
 @api_view(["POST"])
