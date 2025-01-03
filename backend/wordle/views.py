@@ -217,6 +217,7 @@ def guess_word(request):
                         "victory": False,
                         "result": highlighted_input,  # add result for the final render in the UI
                         "attempts": 0,
+                        "target": word,
                     }
                 )
 

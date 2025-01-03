@@ -17,7 +17,7 @@ const startGame = () => fetch("api/new-game/").then((res) => res.json());
 export const Game = () => {
   const [gameKey, setGameKey] = useState(Date.now()); // required for new game
   const [grid, setGrid] = useState(Array(6).fill(Array(5).fill("")));
-  const [gameInfo, setGameInfo] = useState({ over: false, victory: false, message: "", score: 0 });
+  const [gameInfo, setGameInfo] = useState({ over: false, victory: false, message: "", score: 0, target: "" });
   const [attempts, setAttempts] = useState(0);
   const [disabledInput, setDisabledInput] = useState(false);
 
@@ -39,7 +39,7 @@ export const Game = () => {
       const { message, attempts } = gameData;
       toast(message);
       setAttempts(attempts);
-      setGameInfo({ over: false, victory: false, message: "", score: 0 });
+      setGameInfo({ over: false, victory: false, message: "", score: 0, target: "" });
       setGrid(Array(6).fill(Array(5).fill("")));
     }
     if (error) {
@@ -128,13 +128,13 @@ export const Game = () => {
     },
     onSuccess: (data) => {
       console.log(`ON SUCCESS: `, data);
-      const { error, attempts: newAttempts, result, victory, score } = data;
+      const { error, attempts: newAttempts, result, victory, score, target } = data;
       if (error) {
         // intercept for onError()
         throw error;
       }
       if ("victory" in data) {
-        setGameInfo((prevInfo) => ({ ...prevInfo, over: true, victory, score }));
+        setGameInfo((prevInfo) => ({ ...prevInfo, over: true, victory, score, target }));
       }
       setGrid((prevGrid) => {
         const newGrid = [...prevGrid];
@@ -161,7 +161,7 @@ export const Game = () => {
 
   const restart = () => {
     setGrid(Array(6).fill(Array(5).fill("")));
-    setGameInfo({ over: false, victory: false, message: "", score: 0 });
+    setGameInfo({ over: false, victory: false, message: "", score: 0, target: "" });
     setGameKey(Date.now()); // refetch
   };
 
@@ -170,7 +170,7 @@ export const Game = () => {
 
   return (
     <>
-      {gameInfo.over && <ScoreModal victory={gameInfo.victory} restart={restart} score={gameInfo.score} />}
+      {gameInfo.over && <ScoreModal victory={gameInfo.victory} restart={restart} score={gameInfo.score} target={gameInfo.target} />}
       {!gameInfo.over && (
         <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-slate-300 p-2 rounded bg-slate-100 animate-fade-in">
           {grid.map((row, i) => (
