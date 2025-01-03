@@ -41,6 +41,9 @@ def get_user(request):  # called from leaderboard POST
     if is_new_user:
         user.name = user_name
         user.save()  # store in DB
+    elif not is_new_user and user.name != user_name:
+        user.name = user_name
+        user.save()  # update username for the existing email
     return user
 
 
@@ -68,13 +71,16 @@ def create_leaderboard_record(request):
     #   "score": 1000
     # }
     user = get_user(request)
+    new_score = request.data.get("score", 0)
 
     # Get/create leaderboard record
     leaderboard_record, is_new_record = Leaderboard.objects.get_or_create(user=user)
-    leaderboard_record.score = request.data.get("score", 0)
     if is_new_record:
+        leaderboard_record.score = new_score
         leaderboard_record.wins = 1
     else:
+        prev_score = leaderboard_record.score
+        leaderboard_record.score = max(prev_score, new_score)  # keep the highest score
         leaderboard_record.wins = (
             F("wins") + 1
         )  # F is a built-in function for manipulating the existing DB data

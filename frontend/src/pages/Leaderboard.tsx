@@ -23,8 +23,8 @@ export const Leaderboard = () => {
           <tr className="bg-slate-100">
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Email</th>
-            <th className="py-2 px-4 border-b">Score</th>
-            <th className="py-2 px-4 border-b">Submitted On</th>
+            <th className="py-2 px-4 border-b">Best</th>
+            <th className="py-2 px-4 border-b">Last Victory</th>
             <th className="py-2 px-4 border-b">Wins</th>
           </tr>
         </thead>
