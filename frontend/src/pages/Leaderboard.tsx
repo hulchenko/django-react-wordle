@@ -25,8 +25,15 @@ export const Leaderboard = () => {
     }
     const month = new Date(date).toLocaleString("en-CA", { month: "long" });
     const day = new Date(date).getDate();
-    const hours = new Date(date).getHours();
-    const minutes = new Date(date).getMinutes();
+    let hours: string | number = new Date(date).getHours();
+    let minutes: string | number = new Date(date).getMinutes();
+
+    if (hours >= 0 && hours <= 9) {
+      hours = "0" + hours;
+    }
+    if (minutes >= 0 && minutes <= 9) {
+      minutes = "0" + minutes;
+    }
 
     return `${month} ${day}, ${hours}:${minutes}`;
   };
