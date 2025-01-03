@@ -31,6 +31,12 @@ export const Leaderboard = () => {
     return `${month} ${day}, ${hours}:${minutes}`;
   };
 
+  const scoreDisplay = (score: number) => {
+    if (score === 0) return 0;
+    if (!score) return "N/A";
+    return score;
+  };
+
   if (isPending) return <Loader marginTop={96} size={30} />;
   if (error) return <Error />;
 
@@ -53,7 +59,7 @@ export const Leaderboard = () => {
               <tr key={item.id} className="hover:bg-slate-50">
                 <td className="py-2 px-4 border-b max-w-96 overflow-hidden text-ellipsis">{item.user_name || "N/A"}</td>
                 <td className="py-2 px-4 border-b max-w-96 overflow-hidden text-ellipsis">{item.user_email || "N/A"}</td>
-                <td className="py-2 px-4 border-b">{item.score || "N/A"}</td>
+                <td className="py-2 px-4 border-b">{scoreDisplay(item.score)}</td>
                 <td className="py-2 px-4 border-b">{dateDisplay(item.score_date) || "N/A"}</td>
                 <td className="py-2 px-4 border-b">{item.wins || "N/A"}</td>
               </tr>
