@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
-import { useLocalUser } from "../hooks/LocalUser";
+import { useLocalUser } from "../hooks/useLocalUser";
 
 interface ScoreModalProps {
   victory: boolean;
