@@ -1,4 +1,11 @@
-export const FAQIcon = ({ color, size, onClick, className }: { color: string; size: number; onClick: () => void; className: string }) => {
+interface IconProps {
+  color: string;
+  size: number;
+  onClick: () => void;
+  className: string;
+}
+
+export const FAQIcon = ({ color, size, onClick, className }: IconProps) => {
   return (
     <svg
       className={className}
@@ -14,7 +21,7 @@ export const FAQIcon = ({ color, size, onClick, className }: { color: string; si
   );
 };
 
-export const LeaderboardIcon = ({ color, size, onClick, className }: { color: string; size: number; onClick: () => void; className: string }) => {
+export const LeaderboardIcon = ({ color, size, onClick, className }: IconProps) => {
   return (
     <svg
       className={className}

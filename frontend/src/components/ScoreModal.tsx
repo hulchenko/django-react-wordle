@@ -5,7 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
 import { useLocalUser } from "../hooks/LocalUser";
 
-export const ScoreModal = ({ victory, restart, score, target }: { victory: boolean; restart: () => void; score: number; target: string }) => {
+interface ScoreModalProps {
+  victory: boolean;
+  restart: () => void;
+  score: number;
+  target: string;
+}
+
+export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps) => {
   const [localUser, setLocalUser] = useLocalUser();
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");

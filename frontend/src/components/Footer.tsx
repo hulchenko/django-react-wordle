@@ -9,6 +9,10 @@ export const Footer = () => {
       <a href="https://www.nytimes.com/games/wordle/index.html" target="_blank" className="font-bold hover:underline">
         Wordle
       </a>
+      . Special thanks to{" "}
+      <a href="https://random-word-api.herokuapp.com/home" target="_blank" className="font-bold hover:underline">
+        Random Word API
+      </a>
       .
     </div>
   );

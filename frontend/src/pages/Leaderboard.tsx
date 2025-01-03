@@ -1,48 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "../components/Loader";
 import { Error } from "../components/Error";
+import { scoreFormat, dateFormat } from "../utils/formatters";
 
-const fetchLeaderboardData = () => fetch("/api/leaderboard/").then((res) => res.json());
+interface UserInfo {
+  id: number;
+  user_name: string;
+  user_email: string;
+  score: number;
+  score_date: string;
+  wins: number;
+}
+
+const fetchLeaderboardData = (): Promise<UserInfo[]> => fetch("/api/leaderboard/").then((res) => res.json());
 
 export const Leaderboard = () => {
-  const { isPending, error, data } = useQuery({
+  const { isPending, error, data } = useQuery<UserInfo[]>({
     queryKey: ["leaderboardData"],
     queryFn: fetchLeaderboardData,
   });
-
-  interface UserInfo {
-    id: number;
-    user_name: string;
-    user_email: string;
-    score: number;
-    score_date: string;
-    wins: number;
-  }
-
-  const dateDisplay = (date: string) => {
-    if (!date) {
-      return null;
-    }
-    const month = new Date(date).toLocaleString("en-CA", { month: "long" });
-    const day = new Date(date).getDate();
-    let hours: string | number = new Date(date).getHours();
-    let minutes: string | number = new Date(date).getMinutes();
-
-    if (hours >= 0 && hours <= 9) {
-      hours = "0" + hours;
-    }
-    if (minutes >= 0 && minutes <= 9) {
-      minutes = "0" + minutes;
-    }
-
-    return `${month} ${day}, ${hours}:${minutes}`;
-  };
-
-  const scoreDisplay = (score: number) => {
-    if (score === 0) return 0;
-    if (!score) return "N/A";
-    return score;
-  };
 
   if (isPending) return <Loader marginTop={96} size={30} />;
   if (error) return <Error />;
@@ -66,8 +42,8 @@ export const Leaderboard = () => {
               <tr key={item.id} className="hover:bg-slate-50">
                 <td className="py-2 px-4 border-b max-w-96 overflow-hidden text-ellipsis">{item.user_name || "N/A"}</td>
                 <td className="py-2 px-4 border-b max-w-96 overflow-hidden text-ellipsis">{item.user_email || "N/A"}</td>
-                <td className="py-2 px-4 border-b">{scoreDisplay(item.score)}</td>
-                <td className="py-2 px-4 border-b">{dateDisplay(item.score_date) || "N/A"}</td>
+                <td className="py-2 px-4 border-b">{scoreFormat(item.score)}</td>
+                <td className="py-2 px-4 border-b">{dateFormat(item.score_date) || "N/A"}</td>
                 <td className="py-2 px-4 border-b">{item.wins || "N/A"}</td>
               </tr>
             ))
