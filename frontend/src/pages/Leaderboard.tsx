@@ -2,15 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader } from "../components/Loader";
 import { Error } from "../components/Error";
 import { scoreFormat, dateFormat } from "../utils/formatters";
-
-interface UserInfo {
-  id: number;
-  user_name: string;
-  user_email: string;
-  score: number;
-  score_date: string;
-  wins: number;
-}
+import { UserInfo } from "../interfaces/User";
 
 const fetchLeaderboardData = (): Promise<UserInfo[]> => fetch("/api/leaderboard/").then((res) => res.json());
 

@@ -4,13 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
 import { useLocalUser } from "../hooks/useLocalUser";
-
-interface ScoreModalProps {
-  victory: boolean;
-  restart: () => void;
-  score: number;
-  target: string;
-}
+import { ScoreModalProps } from "../interfaces/ScoreModalProps";
 
 export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps) => {
   const [localUser, setLocalUser] = useLocalUser();

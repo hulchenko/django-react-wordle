@@ -1,9 +1,5 @@
 import { PropagateLoader } from "react-spinners";
-
-interface LoaderProps {
-  marginTop: number;
-  size: number;
-}
+import { LoaderProps } from "../interfaces/LoaderProps";
 
 export const Loader = ({ marginTop, size }: LoaderProps) => {
   return (

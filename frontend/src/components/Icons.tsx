@@ -1,9 +1,4 @@
-interface IconProps {
-  color: string;
-  size: number;
-  onClick: () => void;
-  className: string;
-}
+import { IconProps } from "../interfaces/IconProps";
 
 export const FAQIcon = ({ color, size, onClick, className }: IconProps) => {
   return (
