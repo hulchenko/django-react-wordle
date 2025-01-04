@@ -5,7 +5,7 @@ import { MAX_ATTEMPTS, WORD_LENGTH } from "../constants/contstants";
 import { Cell, Grid, GameStart } from "../interfaces/GameBoard";
 
 const startGame = (): Promise<GameStart> => fetch("api/new-game/").then((res) => res.json());
-const defaultCell = { letter: "", color: "", local: true };
+const defaultCell: Cell = { letter: "", color: "default", local: true };
 const initGameState = { over: false, victory: false, message: "", score: 0, target: "" };
 
 export const useWordleGame = () => {
@@ -25,6 +25,7 @@ export const useWordleGame = () => {
   } = useQuery({
     queryKey: ["newGame", gameKey],
     queryFn: startGame,
+    refetchOnWindowFocus: false,
   });
 
   const submitGuess = useMutation({
@@ -117,7 +118,7 @@ export const useWordleGame = () => {
           if (guessArr[i].letter !== "") {
             // clear out the last filled string
             guessArr[i].letter = "";
-            guessArr[i].color = "";
+            guessArr[i].color = "default";
             updateGrid();
             break;
           }

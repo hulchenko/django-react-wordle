@@ -1,15 +1,17 @@
 import { COLORS } from "../constants/contstants";
 
-type Color = keyof typeof COLORS; // 'gray' | 'yellow' | 'green' | 'input'
+type Color = keyof typeof COLORS; // 'gray' | 'yellow' | 'green' | 'input' | 'default'
 
-export interface Cell {
+interface Cell {
   letter: string;
   color: Color;
   local: boolean;
 }
-export type Grid = Cell[][];
+type Grid = Cell[][];
 
-export interface GameStart {
+interface GameStart {
   message: string;
   attempts: number;
 }
+
+export type { Cell, Grid, GameStart };

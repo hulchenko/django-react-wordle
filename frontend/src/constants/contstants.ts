@@ -5,6 +5,7 @@ const COLORS = {
   yellow: "bg-yellow-500",
   green: "bg-green-600",
   input: "bg-slate-400",
+  default: "bg-slate-300",
 };
 
 export { WORD_LENGTH, MAX_ATTEMPTS, COLORS };
