@@ -21,7 +21,7 @@ export const Game = () => {
     <>
       {gameInfo.over && <ScoreModal victory={gameInfo.victory} restart={restartGame} score={gameInfo.score} target={gameInfo.target} />}
       {!gameInfo.over && (
-        <div className="max-w-[600px] h-[600px] m-auto flex flex-col gap-1 mt-40 border border-slate-300 p-2 rounded bg-slate-100 animate-fade-in">
+        <div className="sm:w-[600px] w-96 sm:h-[600px] h-96 m-auto flex flex-col gap-1 mt-40 border border-slate-300 p-2 rounded bg-slate-100 animate-fade-in">
           {grid.map((row, i) => (
             <div key={i} className="flex grow gap-1">
               {row.map((cell, j: number) => (

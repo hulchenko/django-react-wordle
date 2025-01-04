@@ -64,7 +64,7 @@ export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps)
   return (
     <>
       <div className="w-full h-full fixed bg-slate-200 font-thin animate-fade-in">
-        <div className="border border-slate-300 bg-slate-100 rounded mt-40 w-[600px] m-auto p-4">
+        <div className="border border-slate-300 bg-slate-100 rounded mt-40 max-w-[600px] m-auto p-4">
           {victory ? (
             <div>
               <h1 className="text-2xl text-emerald-600">Congratulations!</h1>

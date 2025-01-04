@@ -47,7 +47,6 @@ export const useWordleGame = () => {
       }
     },
     onSuccess: (data) => {
-      console.log(`ON SUCCESS: `, data);
       const { error, attempts: newAttempts, result, victory, score, target } = data;
       if (error) {
         // intercept for onError()
@@ -144,7 +143,6 @@ export const useWordleGame = () => {
   useEffect(() => {
     if (gameData) {
       // initialize game data from query call
-      console.log(gameData);
       const { message, attempts } = gameData;
       toast(message);
       setAttempts(attempts);

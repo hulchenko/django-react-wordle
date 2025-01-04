@@ -4,7 +4,7 @@ import { FAQIcon, LeaderboardIcon } from "./Icons";
 export const Header = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full flex justify-between px-96 p-2 border border-b-slate-300 bg-slate-100">
+    <div className="w-full flex justify-between sm:px-20 2xl:px-96 p-4 border border-b-slate-300 bg-slate-100">
       <h1 className=" cursor-pointer text-2xl font-bold" onClick={() => navigate("/")}>
         Wordle
       </h1>

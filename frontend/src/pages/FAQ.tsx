@@ -1,6 +1,6 @@
 export const FAQ = () => {
   return (
-    <div className="mt-40 text-lg border border-slate-300 bg-slate-100 w-[600px] m-auto p-4 rounded">
+    <div className="mt-40 text-lg border border-slate-300 bg-slate-100 max-w-[600px] m-auto p-4 rounded">
       <h1 className="uppercase font-bold text-3xl">How to play</h1>
       <h5>Guess the word in 6 tries.</h5>
       <hr className="my-6 shadow-black" />
