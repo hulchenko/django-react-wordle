@@ -29,13 +29,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if ENVIRONMENT == "development":
-    DEBUG = True
-else:
-    DEBUG = False
+# if ENVIRONMENT == "development":
+#     DEBUG = True
+# else:
+#     DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
-CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
+# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
+# CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["*"]
 
 
 # Application definition
