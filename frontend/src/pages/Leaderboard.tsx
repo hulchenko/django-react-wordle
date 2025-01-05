@@ -4,7 +4,7 @@ import { Error } from "../components/Error";
 import { scoreFormat, dateFormat } from "../utils/formatters";
 import { UserInfo } from "../interfaces/User";
 
-const fetchLeaderboardData = (): Promise<UserInfo[]> => fetch("/api/leaderboard/").then((res) => res.json());
+const fetchLeaderboardData = (): Promise<UserInfo[]> => fetch("https://django-react-wordle.vercel.app/api/leaderboard/").then((res) => res.json());
 
 export const Leaderboard = () => {
   const { isPending, error, data } = useQuery<UserInfo[]>({
