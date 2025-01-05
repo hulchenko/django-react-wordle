@@ -23,7 +23,7 @@ export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps)
           user_email: email || localUser.email,
           score: Math.ceil(score || 0),
         };
-        const response = await fetch("https://django-react-wordle.vercel.app/api/leaderboard/submit-score", {
+        const response = await fetch("https://django-react-wordle.onrender.com/api/leaderboard/submit-score", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userObj),
