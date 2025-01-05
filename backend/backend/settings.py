@@ -37,9 +37,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
-# CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
-CSRF_TRUSTED_ORIGINS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
 
 # Application definition
 
