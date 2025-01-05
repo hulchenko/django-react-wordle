@@ -35,8 +35,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 #     DEBUG = False
 DEBUG = True
 
-# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
 CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
 
 # Application definition
