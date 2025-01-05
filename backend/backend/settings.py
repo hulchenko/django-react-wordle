@@ -37,6 +37,11 @@ else:
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
 CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "*",  # deployed UI
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,9 +53,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "wordle",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
