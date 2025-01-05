@@ -39,7 +39,7 @@ CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "django-react-wordle.vercel.app",  # deployed UI
+    "https://django-react-wordle.vercel.app",  # deployed UI
 ]
 
 # Application definition
