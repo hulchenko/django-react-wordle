@@ -3,8 +3,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { MAX_ATTEMPTS, WORD_LENGTH } from "../constants/contstants";
 import { Cell, Grid, GameStart } from "../interfaces/GameBoard";
+import baseURL from "../utils/environment";
 
-const startGame = (): Promise<GameStart> => fetch("https://django-react-wordle.onrender.com/api/new-game/").then((res) => res.json());
+const startGame = (): Promise<GameStart> => fetch(`${baseURL}/api/new-game/`).then((res) => res.json());
 const defaultCell: Cell = { letter: "", color: "default", local: true };
 const initGameState = { over: false, victory: false, message: "", score: 0, target: "" };
 
@@ -31,7 +32,7 @@ export const useWordleGame = () => {
   const submitGuess = useMutation({
     mutationFn: async (guess: string) => {
       try {
-        const response = await fetch("https://django-react-wordle.onrender.com/api/submit-guess/", {
+        const response = await fetch(`${baseURL}/api/submit-guess/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ guess }),

@@ -3,8 +3,9 @@ import { Loader } from "../components/Loader";
 import { Error } from "../components/Error";
 import { scoreFormat, dateFormat } from "../utils/formatters";
 import { UserInfo } from "../interfaces/User";
+import baseURL from "../utils/environment";
 
-const fetchLeaderboardData = (): Promise<UserInfo[]> => fetch("https://django-react-wordle.onrender.com/api/leaderboard/").then((res) => res.json());
+const fetchLeaderboardData = (): Promise<UserInfo[]> => fetch(`${baseURL}/api/leaderboard/`).then((res) => res.json());
 
 export const Leaderboard = () => {
   const { isPending, error, data } = useQuery<UserInfo[]>({

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
 import { useLocalUser } from "../hooks/useLocalUser";
 import { ScoreModalProps } from "../interfaces/ScoreModalProps";
+import baseURL from "../utils/environment";
 
 export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps) => {
   const [localUser, setLocalUser] = useLocalUser();
@@ -23,7 +24,7 @@ export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps)
           user_email: email || localUser.email,
           score: Math.ceil(score || 0),
         };
-        const response = await fetch("https://django-react-wordle.onrender.com/api/leaderboard/submit-score", {
+        const response = await fetch(`${baseURL}/api/leaderboard/submit-score`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userObj),
