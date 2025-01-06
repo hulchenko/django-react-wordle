@@ -190,12 +190,18 @@ def new_game(request):
     request.session["attempts"] = 6
     request.session["words_list"] = []
     request.session["time"] = time.time()
+    print(
+        "SESSION AFTER SETTING:", request.session.items()
+    )  # <- THIS SHOWS LIST OF SET VARIABLES
     return Response({"message": "Game started", "attempts": 6})
 
 
 @api_view(["POST"])
 def guess_word(request):
     # get session variables
+    print(
+        "SESSION CONTENT IN GUESS_WORD:", request.session.items()
+    )  # <- THIS EMPTY ARRAY
     word = request.session.get("word")
     print("WORD:", word)  # TODO remove
     attempts = request.session.get("attempts", 0)

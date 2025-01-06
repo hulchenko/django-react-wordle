@@ -112,6 +112,11 @@ else:
         )
     }
 
+# Session settings
+SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Ensure this is set
+SESSION_COOKIE_AGE = 86400  # 1 day
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
