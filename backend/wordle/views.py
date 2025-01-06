@@ -199,6 +199,8 @@ def get_test_session(request):
 
 @api_view(["GET"])
 def new_game(request):
+    if not request.session.session_key:
+        request.session.create()  # create session if it doesn't exist (e.g. incognito browsing)
     print("New game. Current session: ", request.session.session_key)
     print(print(request.session.items()))
     random_word = get_random_word()
@@ -217,7 +219,7 @@ def guess_word(request):
     print(print(request.session.items()))
     # get session variables
     word = request.session.get("word")
-    print("WORD:", word)  # TODO remove
+    print("WORD:", word)  # for debugging
     attempts = request.session.get("attempts", 0)
     words_list = request.session.get("words_list")
     user_input = request.data.get("guess")
