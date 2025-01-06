@@ -34,16 +34,14 @@ if ENVIRONMENT == "development":
 else:
     DEBUG = False
 
-DEBUG = True
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
 
-# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
-# CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://django-react-wordle.vercel.app",  # deployed UI
+]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "https://django-react-wordle.vercel.app",  # deployed UI
-# ]
-CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
