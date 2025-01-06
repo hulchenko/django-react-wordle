@@ -27,6 +27,7 @@ export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps)
         const response = await fetch(`${baseURL}/leaderboard/submit-score`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(userObj),
         });
 

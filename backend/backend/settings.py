@@ -41,6 +41,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://django-react-wordle.vercel.app",  # deployed UI
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -113,7 +114,7 @@ SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SECURE = True  # Use True if your app uses HTTPS
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "None"
 
 
 # Password validation
