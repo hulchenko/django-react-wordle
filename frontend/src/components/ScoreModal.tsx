@@ -24,7 +24,7 @@ export const ScoreModal = ({ victory, restart, score, target }: ScoreModalProps)
           user_email: email || localUser.email,
           score: Math.ceil(score || 0),
         };
-        const response = await fetch(`${baseURL}/api/leaderboard/submit-score`, {
+        const response = await fetch(`${baseURL}/leaderboard/submit-score`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userObj),
