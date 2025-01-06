@@ -36,14 +36,15 @@ else:
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
-CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
+# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "django-react-wordle.onrender.com"]
+# CSRF_TRUSTED_ORIGINS = ["https://django-react-wordle.onrender.com"]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://django-react-wordle.vercel.app",  # deployed UI
-]
-
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "https://django-react-wordle.vercel.app",  # deployed UI
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
@@ -106,10 +107,7 @@ else:
     import dj_database_url
 
     DATABASES = {
-        "default": dj_database_url.config(
-            default=os.environ["POSTGRESQL_URL"],
-            conn_max_age=600,
-        )
+        "default": dj_database_url.config(default=os.environ["POSTGRESQL_URL"])
     }
 
 # Session settings
