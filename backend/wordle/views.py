@@ -1,6 +1,8 @@
 import re
 import time
-import requests
+import json
+import random
+from pathlib import Path
 from sys import exit
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -98,17 +100,15 @@ def create_leaderboard_record(request):
 # Game logic
 
 
-def fetch_random_word():
-    word_length = 5
+def get_random_word():
     try:
-        random_word = requests.get(
-            f"https://random-word-api.herokuapp.com/word?length={word_length}",
-            timeout=5,
-        )
-        random_word.raise_for_status()  # throw an error on 4xx/5xx status code
-        return random_word.json().pop().lower()
-    except requests.exceptions.RequestException as error:
-        print("Fetch failed: ", error)
+        words_file = f"{Path.cwd()}/data/words.json"
+        with open(words_file, "r") as file:
+            data = json.load(file)
+            random_word = random.choice(data)
+            return random_word
+    except Exception as error:
+        print("Error getting word: ", error)
         return Response(
             {"error": "Error getting word"}, status=status.HTTP_400_BAD_REQUEST
         )
@@ -184,24 +184,19 @@ def calculate_score(request):
 
 @api_view(["GET"])
 def new_game(request):
-    random_word = fetch_random_word()
+    random_word = get_random_word()
+    print("RANDOM WORD: ", random_word)
     # store session variables
     request.session["word"] = random_word
     request.session["attempts"] = 6
     request.session["words_list"] = []
     request.session["time"] = time.time()
-    print(
-        "SESSION AFTER SETTING:", request.session.items()
-    )  # <- THIS SHOWS LIST OF SET VARIABLES
     return Response({"message": "Game started", "attempts": 6})
 
 
 @api_view(["POST"])
 def guess_word(request):
     # get session variables
-    print(
-        "SESSION CONTENT IN GUESS_WORD:", request.session.items()
-    )  # <- THIS EMPTY ARRAY
     word = request.session.get("word")
     print("WORD:", word)  # TODO remove
     attempts = request.session.get("attempts", 0)
