@@ -182,8 +182,25 @@ def calculate_score(request):
     return max(final_score, 0)  # return 0, if final_score is negative
 
 
+# SESSION TESTING
+
+
+@api_view(["GET"])
+def set_test_session(request):
+    request.session["test_key"] = "test_value"
+    return Response({"message": "Test key set."})
+
+
+@api_view(["GET"])
+def get_test_session(request):
+    test_value = request.session.get("test_key", "No value found")
+    return Response({"test_key": test_value})
+
+
 @api_view(["GET"])
 def new_game(request):
+    print("New game. Current session: ", request.session.session_key)
+    print(print(request.session.items()))
     random_word = get_random_word()
     print("RANDOM WORD: ", random_word)
     # store session variables
@@ -196,6 +213,8 @@ def new_game(request):
 
 @api_view(["POST"])
 def guess_word(request):
+    print("Guess word. Current session: ", request.session.session_key)
+    print(print(request.session.items()))
     # get session variables
     word = request.session.get("word")
     print("WORD:", word)  # TODO remove
