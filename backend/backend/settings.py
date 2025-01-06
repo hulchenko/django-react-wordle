@@ -111,6 +111,9 @@ else:
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Ensure this is set
 SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SECURE = True  # Use True if your app uses HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
 
 
 # Password validation
