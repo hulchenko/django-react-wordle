@@ -5,7 +5,6 @@ import logo from "/logo.svg";
 export const Main = () => {
   const navigate = useNavigate();
   const isIncognito = useIncognitoState();
-  console.log(`MAIN: `, isIncognito);
 
   return (
     <div className="mt-40 w-full flex flex-col items-center">
