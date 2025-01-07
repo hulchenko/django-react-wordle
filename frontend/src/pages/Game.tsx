@@ -3,10 +3,12 @@ import { Error } from "../components/Error";
 import { Loader } from "../components/Loader";
 import { ScoreModal } from "../components/ScoreModal";
 import { COLORS } from "../constants/contstants";
+import { useIncognitoState } from "../context/IncognitoContext";
 import { useWordleGame } from "../hooks/useWordleGame";
 
 export const Game = () => {
   const { grid, gameInfo, isLoading, error, keyPressHandler, restartGame } = useWordleGame();
+  const isIncognito = useIncognitoState();
 
   useEffect(() => {
     const press = (e: KeyboardEvent) => keyPressHandler(e.key.toUpperCase());
@@ -14,6 +16,7 @@ export const Game = () => {
     return () => document.removeEventListener("keyup", press);
   }, [keyPressHandler]);
 
+  if (isIncognito) return <p>Game cannot be run from a private browser window.</p>;
   if (isLoading) return <Loader marginTop={96} size={30} />;
   if (error) return <Error />;
 
