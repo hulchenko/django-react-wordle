@@ -14,6 +14,4 @@ urlpatterns = [
     ),
     path("new-game/", views.new_game, name="new_game"),
     path("submit-guess/", views.guess_word, name="guess_word"),
-    path("session-set/", views.set_test_session, name="session_set"),
-    path("session-get/", views.get_test_session, name="session_get"),
 ]
